@@ -6,13 +6,12 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
     <RelativeLayout android:layout_width="match_parent" android:layout_height="match_parent">
-        <ImageView
-                android:id="@+id/imageView"
+        <FrameLayout
+                android:id="@+id/imageLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@id/imgSelectButton"
-                android:layout_alignParentTop="true"
-                android:contentDescription="@string/image_holder"/>
+                android:layout_alignParentTop="true"/>
         <Button
                 android:text="@string/select_image"
                 android:id="@+id/imgSelectButton"

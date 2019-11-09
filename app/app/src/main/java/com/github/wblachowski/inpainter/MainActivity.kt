@@ -18,7 +18,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == SELECT_IMG_REQUEST && resultCode == Activity.RESULT_OK) {
-            data?.data?.also { imageView.setImageBitmap(getBitmap(contentResolver, it)) }
+            data?.data?.also {
+                imageLayout.addView(ImageView(this, getBitmap(contentResolver, it)))
+            }
         }
     }
 
