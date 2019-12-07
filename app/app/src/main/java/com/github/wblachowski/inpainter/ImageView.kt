@@ -5,9 +5,10 @@ import android.graphics.*
 import android.view.MotionEvent
 import android.view.View
 
-class ImageView(context: Context, private var bitmap: Bitmap) : View(context) {
+class ImageView(context: Context, private var bitmap: Bitmap, private var layoutSize: Int) :
+    View(context) {
 
-    private var scaledBitmap: Bitmap = bitmap.copy(bitmap.config, true)
+    private var scaledBitmap: Bitmap = getCroppedAndScaledBitmap()
     private var paint = Paint()
     private var path = Path()
 
@@ -18,11 +19,11 @@ class ImageView(context: Context, private var bitmap: Bitmap) : View(context) {
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 15f
     }
-
-    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        super.onSizeChanged(w, h, oldw, oldh)
-        scaledBitmap = Bitmap.createScaledBitmap(bitmap, w, h, true)
-    }
+//
+//    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+//        super.onSizeChanged(w, h, oldw, oldh)
+//        scaledBitmap = Bitmap.createScaledBitmap(bitmap, w, h, true)
+//    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -40,5 +41,22 @@ class ImageView(context: Context, private var bitmap: Bitmap) : View(context) {
         }
         invalidate()
         return true
+    }
+
+    private fun getCroppedAndScaledBitmap(): Bitmap {
+        var newH = layoutSize
+        var newW = layoutSize
+        var cropX = 0
+        var cropY = 0
+        if (bitmap.width < bitmap.height) {
+            newH = (bitmap.height * layoutSize) / bitmap.width
+            cropY = (newH - layoutSize) / 2
+        } else {
+            newW = (bitmap.width * layoutSize) / bitmap.height
+            cropX = (newW - layoutSize) / 2
+        }
+        var result = Bitmap.createScaledBitmap(bitmap, newW, newH, true)
+        result = Bitmap.createBitmap(result, cropX, cropY, layoutSize, layoutSize)
+        return result
     }
 }
