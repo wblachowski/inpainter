@@ -46,7 +46,9 @@ class MainActivity : AppCompatActivity() {
                 Bitmap.createBitmap(it.width, it.height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             it.draw(canvas)
-            resultLayout.addView(ImageView(this, bitmap, resultLayout.width))
+            val view = android.widget.ImageView(this)
+            view.setImageBitmap(bitmap)
+            resultLayout.addView(view)
         }
         processButton.isEnabled = false
         processButton.text = getString(R.string.processing)
