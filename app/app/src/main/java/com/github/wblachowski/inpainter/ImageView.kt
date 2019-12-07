@@ -19,11 +19,6 @@ class ImageView(context: Context, private var bitmap: Bitmap, private var layout
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 15f
     }
-//
-//    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-//        super.onSizeChanged(w, h, oldw, oldh)
-//        scaledBitmap = Bitmap.createScaledBitmap(bitmap, w, h, true)
-//    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
