@@ -3,6 +3,7 @@ package com.github.wblachowski.inpainter
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore.Images.Media.getBitmap
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         imgSelectButton.setOnClickListener { openImageSelectionIntent() }
+        processButton.setOnClickListener { process() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -31,6 +33,18 @@ class MainActivity : AppCompatActivity() {
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(Intent.createChooser(intent, "Select image"), SELECT_IMG_REQUEST)
+    }
+
+    private fun process(){
+        processButton.isEnabled = false
+        processButton.text = getString(R.string.processing)
+        progressBar.bringToFront()
+        progressBar.show()
+        Handler().postDelayed({
+            processButton.isEnabled = true
+            processButton.text = getString(R.string.process)
+            progressBar.hide()
+        },2000)
     }
 
     companion object {
