@@ -10,11 +10,13 @@ import android.provider.MediaStore.Images.Media.getBitmap
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import android.graphics.drawable.BitmapDrawable
 
 
 class MainActivity : AppCompatActivity() {
 
     private var imageView: ImageView? = null
+    private var bitmapChanged: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +50,11 @@ class MainActivity : AppCompatActivity() {
             it.draw(canvas)
             val view = android.widget.ImageView(this)
             view.setImageBitmap(bitmap)
-            resultLayout.addView(view)
+            view.invalidate()
+            val drawable = view.drawable as BitmapDrawable
+            bitmapChanged = drawable.bitmap
         }
+
         processButton.isEnabled = false
         processButton.text = getString(R.string.processing)
         progressBar.bringToFront()
@@ -58,7 +63,16 @@ class MainActivity : AppCompatActivity() {
             processButton.isEnabled = true
             processButton.text = getString(R.string.process)
             progressBar.hide()
+            showResult()
         }, 2000)
+    }
+
+    private fun showResult() {
+        MemoryCacher.addBitmapToMemoryCache("bitmap", bitmapChanged!!)
+        val intent = Intent(this, DisplayResultActivity::class.java).apply {
+            putExtra("layoutWidth", imageLayout.width)
+        }
+        startActivity(intent)
     }
 
     companion object {
