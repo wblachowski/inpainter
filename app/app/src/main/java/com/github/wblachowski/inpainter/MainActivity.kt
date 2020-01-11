@@ -4,25 +4,29 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.provider.MediaStore.Images.Media.getBitmap
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
-import android.graphics.drawable.BitmapDrawable
+import java.io.FileInputStream
+import java.nio.channels.FileChannel
 
 
 class MainActivity : AppCompatActivity() {
 
     private var imageView: ImageView? = null
     private var bitmapChanged: Bitmap? = null
+    private var inpainter: Inpainter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         imgSelectButton.setOnClickListener { openImageSelectionIntent() }
         processButton.setOnClickListener { process() }
+        loadModel()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -33,6 +37,17 @@ class MainActivity : AppCompatActivity() {
             }
             processButton.visibility = View.VISIBLE
         }
+    }
+
+    private fun loadModel() {
+        val fileDescriptor = resources.openRawResourceFd(R.raw.model)
+        val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
+        val fileChannel = inputStream.channel
+        val startOffset = fileDescriptor.startOffset
+        val declaredLength = fileDescriptor.declaredLength
+        val model = fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength)
+        Inpainter.init(model)
+        inpainter = Inpainter.getInstance()
     }
 
     private fun openImageSelectionIntent() {
