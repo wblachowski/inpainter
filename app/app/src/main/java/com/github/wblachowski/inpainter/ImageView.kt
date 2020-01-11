@@ -14,7 +14,7 @@ class ImageView(context: Context, private var bitmap: Bitmap, private var layout
 
     init {
         paint.isAntiAlias = true
-        paint.color = Color.RED
+        paint.color = Color.WHITE
         paint.strokeJoin = Paint.Join.ROUND
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 15f

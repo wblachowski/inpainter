@@ -8,7 +8,7 @@ class Inpainter(modelFile: MappedByteBuffer) {
 
     companion object : SingletonHolder<Inpainter, MappedByteBuffer>(::Inpainter)
 
-    private val interpreter: Interpreter
+    val interpreter: Interpreter
 
     init {
         interpreter = Interpreter(modelFile)

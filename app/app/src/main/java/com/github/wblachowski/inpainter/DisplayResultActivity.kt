@@ -22,12 +22,12 @@ class DisplayResultActivity : AppCompatActivity() {
     }
 
     private fun start(bitmap: Bitmap?, layoutWidth: Int) {
-        imageView = ImageView(this, bitmap!!, layoutWidth)
-
-        val canvas = Canvas(bitmap)
+        val scaledBitmap = Bitmap.createScaledBitmap(bitmap, layoutWidth, layoutWidth, false)
+        imageView = ImageView(this, scaledBitmap, layoutWidth)
+        val canvas = Canvas(scaledBitmap)
         imageView!!.draw(canvas)
         val view = android.widget.ImageView(this)
-        view.setImageBitmap(bitmap)
+        view.setImageBitmap(scaledBitmap)
         resultLayout.addView(view)
     }
 
