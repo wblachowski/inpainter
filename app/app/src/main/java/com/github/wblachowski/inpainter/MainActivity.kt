@@ -5,15 +5,14 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
 import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore.Images.Media.getBitmap
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
-import org.tensorflow.lite.Tensor
 import java.io.FileInputStream
 import java.nio.channels.FileChannel
 
@@ -88,36 +87,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun inpaint() {
-        val scaledBitmap = Bitmap.createScaledBitmap(bitmapChanged!!, 256, 256, false)
+        val matrix = Matrix().apply { postRotate(-90F) }
+        val matrix2 = Matrix().apply { postRotate(90F) }
+        var scaledBitmap = Bitmap.createScaledBitmap(bitmapChanged!!, 256, 256, false)
+        scaledBitmap = Bitmap.createBitmap(scaledBitmap!!, 0, 0, 256, 256, matrix, false)
         val inputImg = Array(1) { Array(256) { Array(256) { FloatArray(3) { 0.0f } } } }
         val inputMask = Array(1) { Array(256) { Array(256) { FloatArray(1) { 0.0f } } } }
         val output = Array(1) { Array(256) { Array(256) { ByteArray(3) { 0 } } } }
         for (x in 0 until scaledBitmap.width) {
             for (y in 0 until scaledBitmap.height) {
                 val pixel = scaledBitmap.getPixel(x, y)
+                inputImg[0][x][y][0] = Color.blue(pixel).toFloat()
+                inputImg[0][x][y][1] = Color.green(pixel).toFloat()
+                inputImg[0][x][y][2] = Color.red(pixel).toFloat()
                 if (pixel == Color.WHITE) {
                     inputMask[0][x][y][0] = 1.0f
-                } else {
-                    val redValue: Int = Color.red(pixel)
-                    val blueValue: Int = Color.blue(pixel)
-                    val greenValue: Int = Color.green(pixel)
-                    inputImg[0][x][y][0] = blueValue / 255f
-                    inputImg[0][x][y][1] = greenValue / 255f
-                    inputImg[0][x][y][2] = redValue / 255f
                 }
             }
         }
         val outputs: HashMap<Int, Any> = HashMap()
         outputs[0] = output
         inpainter!!.interpreter.runForMultipleInputsOutputs(arrayOf(inputImg, inputMask), outputs)
-        val result = Bitmap.createBitmap(scaledBitmap!!)
-        for (x in 0 until scaledBitmap.width) {
-            for (y in 0 until scaledBitmap.height) {
+        var result = Bitmap.createBitmap(scaledBitmap!!)
+        for (x in 0 until result.width) {
+            for (y in 0 until result.height) {
                 val color =
-                    Color.rgb(inputImg[0][x][y][2], inputImg[0][x][y][1], inputImg[0][x][y][0])
+                    Color.rgb(
+                        255 + output[0][x][y][0].toInt(),
+                        255 + output[0][x][y][1].toInt(),
+                        255 + output[0][x][y][2].toInt()
+                    )
                 result.setPixel(x, y, color)
             }
         }
+        result = Bitmap.createBitmap(result, 0, 0, 256, 256, matrix2, false)
         showResult(result)
     }
 
