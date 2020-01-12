@@ -71,11 +71,20 @@ class MainActivity : AppCompatActivity() {
             val drawable = view.drawable as BitmapDrawable
             bitmapChanged = drawable.bitmap
         }
+        imgSelectButton.isEnabled = false
         processButton.isEnabled = false
         processButton.text = getString(R.string.processing)
         progressBar.bringToFront()
         progressBar.show()
-        AsyncTask.execute { inpaint() }
+        AsyncTask.execute {
+            inpaint()
+            runOnUiThread{
+                imgSelectButton.isEnabled = true
+                processButton.isEnabled = true
+                processButton.text = getString(R.string.process)
+                progressBar.hide()
+            }
+        }
     }
 
     private fun showResult(bitmap: Bitmap) {
