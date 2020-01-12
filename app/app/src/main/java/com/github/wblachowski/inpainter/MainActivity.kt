@@ -111,12 +111,14 @@ class MainActivity : AppCompatActivity() {
         var result = Bitmap.createBitmap(scaledBitmap!!)
         for (x in 0 until result.width) {
             for (y in 0 until result.height) {
-                val color =
-                    Color.rgb(
-                        255 + output[0][x][y][0].toInt(),
-                        255 + output[0][x][y][1].toInt(),
-                        255 + output[0][x][y][2].toInt()
-                    )
+                val red = output[0][x][y][0].toInt()
+                val green = output[0][x][y][1].toInt()
+                val blue = output[0][x][y][2].toInt()
+                val color = Color.rgb(
+                    if (red >= 0) red else 255 + red,
+                    if (green >= 0) green else 255 + green,
+                    if (blue >= 0) blue else 255 + blue
+                )
                 result.setPixel(x, y, color)
             }
         }
