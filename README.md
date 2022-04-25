@@ -1,5 +1,5 @@
 # Inpainter 🖌
-A simple PoC Android application performing the task of inpainting on a given image. It accepts an image from your phone's gallery or a picture taken using the camera, allows you to paint over it, and then feeds the image through a neural network to fill the marked space.
+A PoC Android application performing the task of inpainting on a given image. It accepts an image from your phone's gallery or a picture taken using the camera, allows you to paint over it, and then feeds the image through a neural network to fill the marked space.
 It was trained specifically to perform the task on human faces.
 
 ## Results
